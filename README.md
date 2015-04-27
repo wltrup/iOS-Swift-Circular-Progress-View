@@ -28,7 +28,7 @@ You can customize:
 * the **percentage tint**: The color of the percentage text shown by the label.
 * the **percentage font size**: The font size of the percentage text shown by the label.
 * whether or not to display the percentage text using the bold system font (as opposed to the regular system font). Note that although you can't change the actual font of the label through IB, you can do so programmatically by accessing the label and costumising it to your liking.
-* the **progress value** displayed by the progress view. This is what you'd play with in IB to see how your other customisation choices feel like. In IB, the values you enter in the inspector are integers interpreted as percentages but, programmatically, you'd set the values using `CGFloats` in the range [0,1].
+* the **progress value** displayed by the progress view. This is what you'd play with in IB to see how your other customisation choices feel like. In IB, the values you enter in the inspector are integers interpreted as percentages but, programmatically, you'd set the values using `CGFloat`s in the range [0,1].
 
 Of course, being a subclass of `UIView`, you can also customise the progress view's **background color**.
 
