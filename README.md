@@ -44,7 +44,7 @@ I wrote this using **Xcode 6.3 (6D570)** and **Swift 1.2**.
 
 The project also contains a test app that you can run on the simulator (or on a device if you have a developer account). The test app is pretty lame. Every time you tap the `Go` button, it makes random selections for the parameters described above. As a result, you often see terrible combinations of colors, track thicknesses, and font sizes, but that's not the point of the app. The point is to show that you can customise the heck out of this progress view.
 
-![](test_app.mov)
+![](test_app.png)
 
 ## Creator
 
