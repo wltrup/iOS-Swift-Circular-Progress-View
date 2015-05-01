@@ -203,21 +203,14 @@ class CircularProgressView: UIView
 
         set
         {
+            // if showing then we want to have a label; do something innocuous to force the label to be created.
+            if newValue { self.percentLabel?.alpha = 1.0 }
+
             if newValue != iShowPercent
             {
                 iShowPercent = newValue
-                if iShowPercent
-                {
-                    // if showing then we want to have a label, hence call self.percentLabel
-                    self.percentLabel?.hidden = false
-                    updateLabel()
-                }
-                else
-                {
-                    // if hiding then we don't want to create a label when one doesn't exist,
-                    // hence direct access to iPercentLabel
-                    iPercentLabel?.hidden = true
-                }
+                iPercentLabel?.hidden = !iShowPercent
+                if iShowPercent { updateLabel() }
                 setNeedsDisplay()
             }
         }
