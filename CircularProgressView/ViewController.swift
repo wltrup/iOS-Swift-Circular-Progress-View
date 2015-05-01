@@ -104,7 +104,7 @@ class ViewController: UIViewController
 
 class Counter
 {
-    private var _count = 0
+    private var icount = 0
     private let counterMultiReadSingleWriteQueue = dispatch_queue_create(
         "com.wltruppel.Counter.counterMultiReadSingleWriteQueue", DISPATCH_QUEUE_CONCURRENT)
 
@@ -113,14 +113,14 @@ class Counter
         get
         {
             var tempCount: Int = 0
-            dispatch_sync(counterMultiReadSingleWriteQueue) { tempCount = self._count }
+            dispatch_sync(counterMultiReadSingleWriteQueue) { tempCount = self.icount }
             return tempCount
         }
 
         set (newCount)
         {
             dispatch_barrier_sync(counterMultiReadSingleWriteQueue) {
-                self._count = newCount
+                self.icount = newCount
             }
         }
 
