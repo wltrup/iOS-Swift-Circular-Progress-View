@@ -12,76 +12,56 @@ import CoreGraphics
 
 protocol DataLoaderDelegate
 {
-    func dataLoaderDidUpdateDataWithPercentValue(value: CGFloat)
+    func dataLoader(dataLoader: DataLoader, didUpdateDataWithPercentValue value: CGFloat)
     func dataLoaderDidFinishLoadingData(dataLoader: DataLoader)
 }
 
 
 class DataLoader
 {
-    let loaderIndex: Int
+    let loaderIndexPath: NSIndexPath
     var loaderData: DataItem?
 
     static func dataSize() -> Int
     { return data.count }
 
-    static func startLoadingDataForIndex(index: Int, delegate: DataLoaderDelegate)
+    static func loadDataForIndexPath(indexPath: NSIndexPath, delegate: DataLoaderDelegate)
     {
-        let dataLoader = DataLoader(index: index, delegate: delegate)
+        let dataLoader = DataLoader(indexPath: indexPath, delegate: delegate)
         dataLoader.loadData()
     }
 
-    static func stopLoadingDataForIndex(index: Int)
-    { dataLoaders[index]?.aborter.aborted = true }
-
-    private init(index: Int, delegate: DataLoaderDelegate)
+    private init(indexPath: NSIndexPath, delegate: DataLoaderDelegate)
     {
-        loaderIndex = index
+        loaderIndexPath = indexPath
         self.delegate = delegate
-        DataLoader.dataLoaders[index] = self
+        DataLoader.dataLoaders[indexPath] = self
     }
 
-    private static var dataLoaders = [Int: DataLoader]()
+    private static var dataLoaders = [NSIndexPath: DataLoader]()
     private var delegate: DataLoaderDelegate?
-    private let aborter = ThreadSafeAbort()
 
     private func loadData()
     { dispatch_async(globalConcurrentBackgroundQueue) { self.countUp() } }
 
     private func countUp()
     {
-        let maxCount = Int(CGFloat.randomUniform(a: 150, b: 750))
-        var didAbort = false
+        let maxCount = Int(CGFloat.randomUniform(a: 300, b: 1000))
 
         for count in 0..<maxCount
         {
-            if aborter.aborted
-            {
-                didAbort = true
-                break
-            }
-            else
-            {
-                dispatch_sync(globalSerialMainQueue) {
-                    let value = CGFloat(count)/CGFloat(maxCount)
-                    self.delegate?.dataLoaderDidUpdateDataWithPercentValue(value)
-                }
-            }
-        }
-
-        if didAbort
-        {
-            dispatch_sync(globalSerialMainQueue) { self.loaderData = nil }
-        }
-        else
-        {
             dispatch_sync(globalSerialMainQueue) {
-                self.loaderData = data[self.loaderIndex]
-                self.delegate?.dataLoaderDidFinishLoadingData(self)
+                let value = CGFloat(count)/CGFloat(maxCount)
+                self.delegate?.dataLoader(self, didUpdateDataWithPercentValue: value)
             }
         }
 
-        DataLoader.dataLoaders[self.loaderIndex] = nil
+        dispatch_sync(globalSerialMainQueue) {
+            self.loaderData = data[self.loaderIndexPath.row]
+            self.delegate?.dataLoaderDidFinishLoadingData(self)
+        }
+
+        DataLoader.dataLoaders[self.loaderIndexPath] = nil
     }
 }
 
@@ -92,11 +72,11 @@ let data: [DataItem] = {
     da.append(DataItem("brienne", "Brienne of T.", "i_heart_renly@got.com"))
     da.append(DataItem("cersei", "Cersei L.", "queen_bitch@got.com"))
     da.append(DataItem("danny", "Danny T.", "mommy_of_dragons@got.com"))
-    da.append(DataItem("jaime", "Jaime L.", "want_my_hand_back@got.com"))
-    da.append(DataItem("littlefinger", "Petyr B.", "brothels_r_us@got.com"))
-    da.append(DataItem("margie", "Margaery T.", "bite_me_cersei@got.com"))
     da.append(DataItem("ned", "Eddard S.", "ned@got.com"))
+    da.append(DataItem("jaime", "Jaime L.", "want_my_hand_back@got.com"))
     da.append(DataItem("snow", "Jon S.", "lord_commander@got.com"))
+    da.append(DataItem("margie", "Margaery T.", "bite_me_cersei@got.com"))
+    da.append(DataItem("littlefinger", "Petyr B.", "brothels_r_us@got.com"))
     da.append(DataItem("theon", "Theon G.", "want_my_junk_back@got.com"))
     return da
     }()
@@ -113,30 +93,6 @@ class DataItem
         self.photoName = photoName
         self.personName = personName
         self.personEmail = personEmail
-    }
-}
-
-
-// A simple thread-safe access class
-
-class ThreadSafeAbort
-{
-    private var iaborted = false
-    private let counterMultiReadSingleWriteQueue = dispatch_queue_create(
-        "com.wltruppel.ThreadSafeAbort.counterMultiReadSingleWriteQueue", DISPATCH_QUEUE_CONCURRENT)
-
-    var aborted: Bool {
-
-        get
-        {
-            var tempAbort = false
-            dispatch_sync(counterMultiReadSingleWriteQueue) { tempAbort = self.iaborted }
-            return tempAbort
-        }
-
-        set
-        { dispatch_barrier_sync(counterMultiReadSingleWriteQueue) { self.iaborted = newValue } }
-        
     }
 }
 

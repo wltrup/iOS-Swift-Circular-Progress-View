@@ -1,5 +1,5 @@
 # Circular Progress View
-A fully customisable `Swift` class for a progress view similar to what the _Apple Watch_ has.
+A customisable `Swift` class for a progress view similar to what the _Apple Watch_ has.
 
 ## Motivation
 You may have seen that the _Apple Watch_ has some cool new progress views, like this:
@@ -40,15 +40,11 @@ Just copy the source file `CircularProgressView.swift` into your project. That's
 
 I wrote this using **Xcode 6.3 (6D570)** and **Swift 1.2**.
 
-## Test app:
-
-The project also contains a test app that you can run on the simulator (or on a device if you have a developer account). The test app is pretty lame. Every time you tap the `Go` button, it makes random selections for the parameters described above. As a result, you often see terrible combinations of colors, track thicknesses, and font sizes, but that's not the point of the app. The point is to show that you can customise the heck out of this progress view.
-
-![](test_app.png)
-
 ## Demo app:
 
-I've now added a demo app that shows `CircularProgressView` in action on a more realistic scenario. All it does is pretend to load information about characters from _Game of Thrones_. You can tap on a character icon to reload it. Of course, there's no actual loading of anything; the data is all hardcoded into the app itself and the app simply counts until some number before it displays the data. Yes, the icons are ugly. I originally wanted to have icons from [this page](http://gameofthrones.wikia.com/wiki/Category:Characters) but then I'd be incurring on copyright violation so I opted for creating them myself.
+I've added a demo app showing `CircularProgressView` in action on a typical scenario. All the app does is pretend to download information about characters from _Game of Thrones_. Of course, there's no actual downloading of anything; the data is all hardcoded into the app itself and the app simply counts until some number before it displays the data. Yes, the avatars are ugly. I originally wanted to have images from [this page](http://gameofthrones.wikia.com/wiki/Category:Characters) but then I'd be incurring on copyright violation so I opted for creating them myself. As you can see, I'm a great artist.
+
+The demo app lets you play with the various options (other than color and thickness) by tapping on the corresponding buttons: **clockwise**/**counterclockwise**, **normal**/**reversed mode**, and **show**/**hide percentage** labels. The **Reload** button, well, reloads everything. The buttons affect all the progress views at once.
 
 ![](demo_app.png)
 
