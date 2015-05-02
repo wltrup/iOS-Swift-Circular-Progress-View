@@ -9,168 +9,47 @@
 import UIKit
 
 
-class ViewController: UIViewController
+class ViewController: UITableViewController
 {
-    @IBOutlet var button: UIButton!
-    @IBOutlet var clockwiseSwitch: UISwitch!
-    @IBOutlet var showPercentsSwitch: UISwitch!
-    @IBOutlet var reversedSwitch: UISwitch!
-    @IBOutlet var progressView: CircularProgressView!
+    private var dataItems = [Int: DataItem]()
 
-    private var counter: Counter!
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    { return DataLoader.dataSize() }
 
-    override func viewWillAppear(animated: Bool)
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
-        super.viewWillAppear(animated)
+        let index = indexPath.row
 
-        forceSwitchUpdate(clockwiseSwitch)
-        forceSwitchUpdate(showPercentsSwitch)
-        forceSwitchUpdate(reversedSwitch)
+        let cell = tableView.dequeueReusableCellWithIdentifier("cellID") as? CustomCell
+        cell!.dataIndex = index
+        cell!.dataItem = dataItems[index]
 
-        progressView.value = CGFloat.randomUniform01
+        return cell!
     }
 
-    @IBAction func switchTapped(sender: UISwitch)
+    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell,
+        forRowAtIndexPath indexPath: NSIndexPath)
     {
-        if sender == clockwiseSwitch
+        if let customCell = cell as? CustomCell
         {
-            progressView.clockwise = sender.on
-        }
-        else if sender == showPercentsSwitch
-        {
-            progressView.showPercent = sender.on
-        }
-        else if sender == reversedSwitch
-        {
-            progressView.reversed = sender.on
+            if customCell.dataItem != nil
+            { customCell.showContent(true, animated: true) }
+            else
+            { customCell.startLoadingData() }
         }
     }
 
-    @IBAction func buttonTapped(sender: UIButton)
+    override func tableView(tableView: UITableView, didEndDisplayingCell cell: UITableViewCell,
+        forRowAtIndexPath indexPath: NSIndexPath)
     {
-        sender.enabled = false
-        UIView.animateWithDuration(NSTimeInterval(1.0), animations: { sender.alpha = 0.0 })
-
-        counter = Counter()
-
-        progressView.backgroundColor = UIColor.randomColor()
-        progressView.trackThickness = CGFloat.randomUniform(a: 10, b: 50)
-        progressView.progressThicknessFraction = CGFloat.randomUniform(a: 0.1, b: 0.9)
-        progressView.trackTint = UIColor.randomColor()
-        progressView.progressTint = UIColor.randomColor()
-        progressView.percentTint = UIColor.randomColor()
-        progressView.percentBold = CGFloat.randomBool
-        progressView.percentSize = CGFloat.randomUniform(a: 15, b: 48)
-
-        dispatch_async(globalConcurrentBackgroundQueue) { self.countUp() }
-    }
-
-    private func countUp()
-    {
-        let count = self.counter.count
-        let maxCount = 100
-
-        dispatch_sync(globalSerialMainQueue) {
-            self.progressView.value = CGFloat(count)/CGFloat(maxCount)
-        }
-
-        if count < maxCount
-        {
-            self.counter.count += 1
-            let delay = dispatchTimeFromNowInSeconds(0.01)
-            dispatch_after(delay, globalConcurrentBackgroundQueue) { self.countUp() }
-        }
-        else
-        {
-            dispatch_sync(globalSerialMainQueue) {
-                self.button.enabled = true
-                UIView.animateWithDuration(NSTimeInterval(1.0), animations: { self.button.alpha = 1.0 })
-            }
-        }
-    }
-
-    private func forceSwitchUpdate(theSwitch: UISwitch)
-    {
-        theSwitch.on = !theSwitch.on
-        switchTapped(theSwitch)
-
-        theSwitch.on = !theSwitch.on
-        switchTapped(theSwitch)
+        if let customCell = cell as? CustomCell
+        { customCell.stopLoadingData() }
     }
 }
 
 
-// A simple thread-safe counter class
-
-class Counter
+extension ViewController: CustomCellDelegate
 {
-    private var icount = 0
-    private let counterMultiReadSingleWriteQueue = dispatch_queue_create(
-        "com.wltruppel.Counter.counterMultiReadSingleWriteQueue", DISPATCH_QUEUE_CONCURRENT)
-
-    var count: Int {
-
-        get
-        {
-            var tempCount: Int = 0
-            dispatch_sync(counterMultiReadSingleWriteQueue) { tempCount = self.icount }
-            return tempCount
-        }
-
-        set (newCount)
-        {
-            dispatch_barrier_sync(counterMultiReadSingleWriteQueue) {
-                self.icount = newCount
-            }
-        }
-
-    }
+    func cellDidFinishLoadingData(dataItem: DataItem?, forIndex index: Int)
+    { dataItems[index] = dataItem }
 }
-
-
-// GCD utils
-
-var globalSerialMainQueue: dispatch_queue_t!
-{
-    return dispatch_get_main_queue()
-}
-
-var globalConcurrentBackgroundQueue: dispatch_queue_t!
-{
-    return dispatch_get_global_queue(Int(QOS_CLASS_BACKGROUND.value), 0)
-}
-
-func dispatchTimeFromNowInSeconds(delayInSeconds: Double) -> dispatch_time_t!
-{
-    return dispatch_time(DISPATCH_TIME_NOW, Int64(delayInSeconds * Double(NSEC_PER_SEC)))
-}
-
-
-// UIKit extensions
-
-extension CGFloat
-{
-    // Returns a uniformly distributed random CGFloat in the range [0, 1].
-    public static var randomUniform01: CGFloat
-    { return CGFloat(arc4random_uniform(UInt32.max)) / CGFloat(UInt32.max - 1) }
-
-    // Returns a uniformly distributed random CGFloat in the range [min(a,b), max(a,b)].
-    public static func randomUniform(#a: CGFloat, b: CGFloat) -> CGFloat
-    { return a + (b - a) * CGFloat.randomUniform01 }
-
-    // Returns a uniformly distributed random boolean.
-    public static var randomBool: Bool
-    { return CGFloat.randomUniform01 <= 0.5 }
-}
-
-extension UIColor
-{
-    static func randomColor() -> UIColor
-    {
-        let r = CGFloat.randomUniform01
-        let g = CGFloat.randomUniform01
-        let b = CGFloat.randomUniform01
-        return UIColor(red: r, green: g, blue: b, alpha: 1.0)
-    }
-}
-
