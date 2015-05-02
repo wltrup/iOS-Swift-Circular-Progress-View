@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>BetterExampleApp.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 		<key>CircularProgressView.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -18,6 +23,16 @@
 			<true/>
 		</dict>
 		<key>3B2242D41AED71A200F39C3F</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3B85E68C1AF2E9420004E7E5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3B85E6A01AF2E9430004E7E5</key>
 		<dict>
 			<key>primary</key>
 			<true/>
