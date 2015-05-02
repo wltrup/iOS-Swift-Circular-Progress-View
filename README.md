@@ -46,6 +46,12 @@ The project also contains a test app that you can run on the simulator (or on a 
 
 ![](test_app.png)
 
+## Demo app:
+
+I've now added a demo app that shows `CircularProgressView` in action on a more realistic scenario. All it does is pretend to load information about characters from _Game of Thrones_. You can tap on a character icon to reload it. Of course, there's no actual loading of anything; the data is all hardcoded into the app itself and the app simply counts until some number before it displays the data. Yes, the icons are ugly. I originally wanted to have icons from [this page](http://gameofthrones.wikia.com/wiki/Category:Characters) but then I'd be incurring on copyright violation so I opted for creating them myself.
+
+![](demo_app.png)
+
 ## Creator
 
 That would be me, _Wagner Truppel_. If you need or want to contact me, send a message to `wagner` at `restlessbrain` dot com.
