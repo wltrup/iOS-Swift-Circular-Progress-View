@@ -332,9 +332,9 @@ class CircularProgressView: UIView
                     label.adjustsFontSizeToFitWidth = true
                     label.baselineAdjustment = .AlignCenters
                     label.minimumScaleFactor = 0.5
-
-                    label.setTranslatesAutoresizingMaskIntoConstraints(false)
-                    label.removeConstraints(label.constraints())
+					
+                    label.translatesAutoresizingMaskIntoConstraints = false
+                    label.removeConstraints(label.constraints)
 
                     var constraint: NSLayoutConstraint
 
@@ -388,13 +388,13 @@ class CircularProgressView: UIView
     }
 
 
-    private func fillTrack(#center: CGPoint, radius: CGFloat, sangle: CGFloat, eangle: CGFloat,
+    private func fillTrack(center center: CGPoint, radius: CGFloat, sangle: CGFloat, eangle: CGFloat,
         color: UIColor, thickness: CGFloat, clockwise: Bool)
     {
         color.set()
         let p = UIBezierPath()
         p.lineWidth = thickness
-        p.lineCapStyle = kCGLineCapRound
+		p.lineCapStyle = .Round
         p.addArcWithCenter(center, radius: radius, startAngle: sangle, endAngle: eangle, clockwise: clockwise)
         p.stroke()
     }

@@ -103,7 +103,7 @@ var globalSerialMainQueue: dispatch_queue_t!
 { return dispatch_get_main_queue() }
 
 var globalConcurrentBackgroundQueue: dispatch_queue_t!
-{ return dispatch_get_global_queue(Int(QOS_CLASS_BACKGROUND.value), 0) }
+{ return dispatch_get_global_queue(Int(QOS_CLASS_BACKGROUND.rawValue), 0) }
 
 func dispatchTimeFromNowInSeconds(delayInSeconds: Double) -> dispatch_time_t!
 { return dispatch_time(DISPATCH_TIME_NOW, Int64(delayInSeconds * Double(NSEC_PER_SEC))) }
@@ -118,7 +118,7 @@ extension CGFloat
     { return CGFloat(arc4random_uniform(UInt32.max)) / CGFloat(UInt32.max - 1) }
 
     // Returns a uniformly distributed random CGFloat in the range [min(a,b), max(a,b)].
-    public static func randomUniform(#a: CGFloat, b: CGFloat) -> CGFloat
+    public static func randomUniform(a a: CGFloat, b: CGFloat) -> CGFloat
     { return a + (b - a) * CGFloat.randomUniform01 }
 
     // Returns a uniformly distributed random boolean.
