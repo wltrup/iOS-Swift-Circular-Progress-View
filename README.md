@@ -2,7 +2,7 @@
 A customisable `Swift` class for a progress view similar to what the _Apple Watch_ has.
 
 ## IMPORTANT
-**This project has been deprecated for the time being as it uses Swift 1.2 and I don't intend to update it any time soon. It's still useful as a learning resource but that's about it for now.**
+2016.12.03: This project has been **deprecated** for the time being as it uses Swift 1.2 and I don't intend to update it any time soon. It's still useful as a learning resource but that's about it for now.
 
 ## Motivation
 You may have seen that the _Apple Watch_ has some cool new progress views, like this:
