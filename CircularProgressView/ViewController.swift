@@ -21,43 +21,43 @@ class ViewController: UIViewController
 
     @IBAction func reloadBtnTapped()
     {
-        reloadButton.enabled = false
+        reloadButton.isEnabled = false
         dataItems = [NSIndexPath: DataItem]()
         tableView.reloadData()
     }
 
     @IBAction func clockwiseBtnTapped(sender: UIButton)
     {
-        sender.selected = !sender.selected
-        clockwise = !sender.selected
+        sender.isSelected = !sender.isSelected
+        clockwise = !sender.isSelected
         for row in 0..<DataLoader.dataSize()
         {
-            let indexPath = NSIndexPath(forRow: row, inSection: 0)
-            let cell = tableView.cellForRowAtIndexPath(indexPath) as? CustomCell
+            let indexPath = NSIndexPath(row: row, section: 0)
+            let cell = tableView.cellForRow(at: indexPath as IndexPath) as? CustomCell
             cell?.progressView.clockwise = clockwise
         }
     }
 
     @IBAction func progressBtnTapped(sender: UIButton)
     {
-        sender.selected = !sender.selected
-        reversed = sender.selected
+        sender.isSelected = !sender.isSelected
+        reversed = sender.isSelected
         for row in 0..<DataLoader.dataSize()
         {
-            let indexPath = NSIndexPath(forRow: row, inSection: 0)
-            let cell = tableView.cellForRowAtIndexPath(indexPath) as? CustomCell
+            let indexPath = NSIndexPath(row: row, section: 0)
+            let cell = tableView.cellForRow(at: indexPath as IndexPath) as? CustomCell
             cell?.progressView.reversed = reversed
         }
     }
 
     @IBAction func percentBtnTapped(sender: UIButton)
     {
-        sender.selected = !sender.selected
-        showPercs = !sender.selected
+        sender.isSelected = !sender.isSelected
+        showPercs = !sender.isSelected
         for row in 0..<DataLoader.dataSize()
         {
-            let indexPath = NSIndexPath(forRow: row, inSection: 0)
-            let cell = tableView.cellForRowAtIndexPath(indexPath) as? CustomCell
+            let indexPath = NSIndexPath(row: row, section: 0)
+            let cell = tableView.cellForRow(at: indexPath as IndexPath) as? CustomCell
             cell?.progressView.showPercent = showPercs
         }
     }
@@ -66,12 +66,12 @@ class ViewController: UIViewController
 
 extension ViewController: UITableViewDataSource, UITableViewDelegate
 {
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     { return DataLoader.dataSize() }
 
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        let cell = tableView.dequeueReusableCellWithIdentifier("cellID") as? CustomCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cellID") as? CustomCell
         cell?.dataItem = dataItems[indexPath]
         cell?.progressView.clockwise = clockwise
         cell?.progressView.reversed = reversed
@@ -79,17 +79,17 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate
         return cell!
     }
 
-    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell,
-        forRowAtIndexPath indexPath: NSIndexPath)
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell,
+                   forRowAt indexPath: IndexPath)
     {
         if let customCell = cell as? CustomCell
         {
             if customCell.dataItem != nil
-            { customCell.showContent(true, animated: true) }
+            { customCell.showContent(show: true, animated: true) }
             else
             {
-                customCell.showContent(false, animated: false)
-                DataLoader.loadDataForIndexPath(indexPath, delegate: self)
+                customCell.showContent(show: false, animated: false)
+                DataLoader.loadDataForIndexPath(indexPath: indexPath as NSIndexPath, delegate: self)
             }
         }
     }
@@ -100,7 +100,7 @@ extension ViewController: DataLoaderDelegate
 {
     func dataLoader(dataLoader: DataLoader, didUpdateDataWithPercentValue value: CGFloat)
     {
-        let cell = tableView.cellForRowAtIndexPath(dataLoader.loaderIndexPath) as? CustomCell
+        let cell = tableView.cellForRow(at: dataLoader.loaderIndexPath as IndexPath) as? CustomCell
         cell?.progressView.value = value
     }
 
@@ -111,12 +111,12 @@ extension ViewController: DataLoaderDelegate
 
         dataItems[indexPath] = data
 
-        let cell = tableView.cellForRowAtIndexPath(indexPath) as? CustomCell
+        let cell = tableView.cellForRow(at: indexPath as IndexPath) as? CustomCell
         cell?.dataItem = data
 
-        if data != nil { cell?.showContent(true, animated: true) }
+        if data != nil { cell?.showContent(show: true, animated: true) }
 
         let canReload = (dataItems.count == DataLoader.dataSize())
-        reloadButton.enabled = canReload
+        reloadButton.isEnabled = canReload
     }
 }

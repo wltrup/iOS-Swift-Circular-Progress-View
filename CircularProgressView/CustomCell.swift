@@ -36,15 +36,15 @@ class CustomCell: UITableViewCell
     override func awakeFromNib()
     {
         super.awakeFromNib()
-        showContent(false, animated: false)
+        showContent(show: false, animated: false)
     }
 
     func showContent(show: Bool, animated: Bool)
     {
         if animated
         {
-            let duration: NSTimeInterval = (show ? 0.3 : 0.25)
-            animateContent(duration, show: show)
+            let duration: TimeInterval = (show ? 0.3 : 0.25)
+            animateContent(duration: duration, show: show)
         }
         else
         {
@@ -53,10 +53,10 @@ class CustomCell: UITableViewCell
             photoView.alpha = alpha
             progressView.alpha = 1.0 - alpha
 
-            nameLabel.hidden = !show
+            nameLabel.isHidden = !show
             nameLabel.alpha = alpha
 
-            emailLabel.hidden = !show
+            emailLabel.isHidden = !show
             emailLabel.alpha = alpha
         }
     }
@@ -66,52 +66,50 @@ class CustomCell: UITableViewCell
 // Content animation
 extension CustomCell
 {
-    private func animateContent(duration: NSTimeInterval, show: Bool)
+    private func animateContent(duration: TimeInterval, show: Bool)
     {
         if show
         {
-            UIView.animateWithDuration(0.75,
-                animations: {
-                    self.photoView.alpha    = 1.0
-                    self.progressView.alpha = 0.0
-                },
-                completion: { (completed) -> Void in
-                    self.animateView(self.nameLabel,
-                        duration: duration, show: true,
-                        completion: { (completed) -> Void in
-                            self.animateView(self.emailLabel,
-                                duration: duration, show: show, completion: nil)
-                    })
-            })
+            UIView.animate(withDuration: 0.75, animations: {
+                self.photoView.alpha    = 1.0
+                self.progressView.alpha = 0.0
+            }) { (completed) -> Void in
+                self.animateView(view: self.nameLabel,
+                                 duration: duration, show: true,
+                                 completion: { (completed) -> Void in
+                                    self.animateView(view: self.emailLabel,
+                                                     duration: duration, show: show, completion: nil)
+                })
+            }
         }
         else
         {
-            self.animateView(self.emailLabel,
+            self.animateView(view: self.emailLabel,
                 duration: duration, show: false,
                 completion: { (completed) -> Void in
-                    self.animateView(self.nameLabel,
+                    self.animateView(view: self.nameLabel,
                         duration: duration, show: false,
                         completion: { (completed) -> Void in
-                            UIView.animateWithDuration(0.75,
-                                animations: {
-                                    self.photoView.alpha    = 0.0
-                                    self.progressView.alpha = 1.0
-                                })
+                            UIView.animate(withDuration: 0.75, animations: {
+                                
+                                self.photoView.alpha    = 0.0
+                                self.progressView.alpha = 1.0
+                            })
                     })
             })
         }
     }
 
-    private func animateView(view: UIView, duration: NSTimeInterval, show: Bool, completion: ((Bool) -> Void)?)
+    private func animateView(view: UIView, duration: TimeInterval, show: Bool, completion: ((Bool) -> Void)?)
     {
         let alpha: CGFloat = (show ? 1.0 : 0.0)
 
-        UIView.animateWithDuration(duration,
+        UIView.animate(withDuration: duration,
             animations: {
                 view.alpha = alpha
             },
             completion: { (completed) -> Void in
-                view.hidden = !show
+                view.isHidden = !show
                 completion?(completed)
         })
     }
