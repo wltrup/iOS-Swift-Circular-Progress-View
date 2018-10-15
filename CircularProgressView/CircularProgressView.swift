@@ -66,7 +66,7 @@ class CircularProgressView: UIView
             }
         }
     }
-    private var iTrackTint: UIColor = UIColor.blackColor()
+    private var iTrackTint: UIColor = UIColor.black
 
 
     // The color of the part of the track representing progress.
@@ -89,7 +89,7 @@ class CircularProgressView: UIView
             }
         }
     }
-    private var iProgressTint: UIColor = UIColor.whiteColor()
+    private var iProgressTint: UIColor = UIColor.white
 
 
     // The thickness of the full track, in points. It shouldn't be less than minTrackThickness,
@@ -104,7 +104,7 @@ class CircularProgressView: UIView
             if newValue != iTrackThickness
             {
                 iTrackThickness = max(minTrackThickness, newValue)
-                updateProgressThickness(iProgressThickness)
+                updateProgressThickness(value: iProgressThickness)
                 setNeedsDisplay()
             }
         }
@@ -126,7 +126,7 @@ class CircularProgressView: UIView
         {
             if newValue != iProgressThickness
             {
-                updateProgressThickness(newValue)
+                updateProgressThickness(value: newValue)
                 setNeedsDisplay()
             }
         }
@@ -209,7 +209,7 @@ class CircularProgressView: UIView
             if newValue != iShowPercent
             {
                 iShowPercent = newValue
-                iPercentLabel?.hidden = !iShowPercent
+                iPercentLabel?.isHidden = !iShowPercent
                 if iShowPercent { updateLabel() }
                 setNeedsDisplay()
             }
@@ -234,7 +234,7 @@ class CircularProgressView: UIView
             }
         }
     }
-    private var iPercentTint = UIColor.blackColor()
+    private var iPercentTint = UIColor.black
 
 
     // The font size of the percent text when it's showing. Setting this property is equivalent to
@@ -328,9 +328,9 @@ class CircularProgressView: UIView
                     updateLabelFontSize()
                     label.textColor = iPercentTint
 
-                    label.textAlignment = .Center
+                    label.textAlignment = .center
                     label.adjustsFontSizeToFitWidth = true
-                    label.baselineAdjustment = .AlignCenters
+                    label.baselineAdjustment = .alignCenters
                     label.minimumScaleFactor = 0.5
 					
                     label.translatesAutoresizingMaskIntoConstraints = false
@@ -338,25 +338,25 @@ class CircularProgressView: UIView
 
                     var constraint: NSLayoutConstraint
 
-                    constraint = NSLayoutConstraint(item: label, attribute: .CenterX,
-                        relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1.0, constant: 0)
+                    constraint = NSLayoutConstraint(item: label, attribute: .centerX,
+                                                    relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1.0, constant: 0)
                     addConstraint(constraint)
 
-                    constraint = NSLayoutConstraint(item: label, attribute: .CenterY,
-                        relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1.0, constant: 0)
+                    constraint = NSLayoutConstraint(item: label, attribute: .centerY,
+                                                    relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1.0, constant: 0)
                     addConstraint(constraint)
-
-                    let w = CGRectGetWidth(bounds)
-                    let h = CGRectGetHeight(bounds)
+                    
+                    let w = (bounds.width)
+                    let h = (bounds.height)
                     var s = (min(w, h) - iTrackThickness) / 2
                     s *= 0.9 // Use up to 90% of the space between opposite sides of the inner circle.
 
-                    constraint = NSLayoutConstraint(item: label, attribute: .Width,
-                        relatedBy: .LessThanOrEqual, toItem: self, attribute: .Width, multiplier: 0.0, constant: s)
+                    constraint = NSLayoutConstraint(item: label, attribute: .width,
+                                                    relatedBy: .lessThanOrEqual, toItem: self, attribute: .width, multiplier: 0.0, constant: s)
                     addConstraint(constraint)
 
-                    constraint = NSLayoutConstraint(item: label, attribute: .Height,
-                        relatedBy: .LessThanOrEqual, toItem: self, attribute: .Height, multiplier: 0.0, constant: s)
+                    constraint = NSLayoutConstraint(item: label, attribute: .height,
+                                                    relatedBy: .lessThanOrEqual, toItem: self, attribute: .height, multiplier: 0.0, constant: s)
                     addConstraint(constraint)
 
                     updateLabel()
@@ -368,34 +368,34 @@ class CircularProgressView: UIView
     private var iPercentLabel: UILabel?
 
 
-    override func drawRect(rect: CGRect)
+    override func draw(_ rect: CGRect)
     {
-        let w = CGRectGetWidth(bounds)
-        let h = CGRectGetHeight(bounds)
+        let w = (bounds.width)
+        let h = (bounds.height)
         let r = (min(w, h) - iTrackThickness) / 2
         let cp = CGPoint(x: w/2, y: h/2) // *not* 'let cp = center' because center will be in the frame's coord system!
 
         // Draw the full track.
-        fillTrack(center: cp, radius: r, sangle: 0, eangle: CGFloat(2*M_PI),
+        fillTrack(center: cp, radius: r, sangle: 0, eangle: CGFloat(2*Double.pi),
             color: iTrackTint, thickness: iTrackThickness, clockwise: true)
 
         // Draw the progress track.
         var val = (iReversed ? (1 - iValue) : iValue)
         val = (iClockwise ? +iValue : -iValue)
         let clockwise = (iReversed ? !iClockwise : iClockwise)
-        fillTrack(center: cp, radius: r, sangle: CGFloat(-M_PI/2), eangle: CGFloat(2*M_PI*Double(val) - M_PI/2),
+        fillTrack(center: cp, radius: r, sangle: CGFloat(-Double.pi/2), eangle: CGFloat(2*Double.pi*Double(val) - Double.pi/2),
             color: iProgressTint, thickness: iProgressThickness, clockwise: clockwise)
     }
 
 
-    private func fillTrack(center center: CGPoint, radius: CGFloat, sangle: CGFloat, eangle: CGFloat,
+    private func fillTrack(center: CGPoint, radius: CGFloat, sangle: CGFloat, eangle: CGFloat,
         color: UIColor, thickness: CGFloat, clockwise: Bool)
     {
         color.set()
         let p = UIBezierPath()
         p.lineWidth = thickness
-		p.lineCapStyle = .Round
-        p.addArcWithCenter(center, radius: radius, startAngle: sangle, endAngle: eangle, clockwise: clockwise)
+        p.lineCapStyle = .round
+        p.addArc(withCenter: center, radius: radius, startAngle: sangle, endAngle: eangle, clockwise: clockwise)
         p.stroke()
     }
 
@@ -412,18 +412,18 @@ class CircularProgressView: UIView
     {
         if iPercentBold
         {
-            iPercentLabel?.font = UIFont.boldSystemFontOfSize(iPercentSize)
+            iPercentLabel?.font = UIFont.boldSystemFont(ofSize: iPercentSize)
         }
         else
         {
-            iPercentLabel?.font = UIFont.systemFontOfSize(iPercentSize)
+            iPercentLabel?.font = UIFont.systemFont(ofSize: iPercentSize)
         }
     }
 
 
     private func updateLabel()
     {
-        if let label = iPercentLabel where !label.hidden
+        if let label = iPercentLabel, !label.isHidden
         {
             let val = (iReversed ? (1 - iValue) : iValue)
             label.text = "\(Int(val * 100.0) % 101) %"
@@ -438,7 +438,7 @@ class CircularProgressView: UIView
     override func prepareForInterfaceBuilder()
     {
         super.prepareForInterfaceBuilder()
-        percentLabel?.hidden = !showPercent
+        percentLabel?.isHidden = !showPercent
     }
 
     #endif

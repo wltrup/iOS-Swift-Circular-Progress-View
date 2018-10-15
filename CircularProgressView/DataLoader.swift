@@ -42,7 +42,7 @@ class DataLoader
     private var delegate: DataLoaderDelegate?
 
     private func loadData()
-    { dispatch_async(globalConcurrentBackgroundQueue) { self.countUp() } }
+    { globalConcurrentBackgroundQueue.async() { self.countUp() } }
 
     private func countUp()
     {
@@ -50,15 +50,15 @@ class DataLoader
 
         for count in 0..<maxCount
         {
-            dispatch_sync(globalSerialMainQueue) {
+            globalSerialMainQueue.sync() {
                 let value = CGFloat(count)/CGFloat(maxCount)
-                self.delegate?.dataLoader(self, didUpdateDataWithPercentValue: value)
+                self.delegate?.dataLoader(dataLoader: self, didUpdateDataWithPercentValue: value)
             }
         }
 
-        dispatch_sync(globalSerialMainQueue) {
+        globalSerialMainQueue.sync() {
             self.loaderData = data[self.loaderIndexPath.row]
-            self.delegate?.dataLoaderDidFinishLoadingData(self)
+            self.delegate?.dataLoaderDidFinishLoadingData(dataLoader: self)
         }
 
         DataLoader.dataLoaders[self.loaderIndexPath] = nil
@@ -84,7 +84,7 @@ let data: [DataItem] = {
 
 class DataItem
 {
-    let  photoName:  String!
+    let photoName:  String!
     let personName:  String!
     let personEmail: String!
 
@@ -99,15 +99,11 @@ class DataItem
 
 // GCD utils
 
-var globalSerialMainQueue: dispatch_queue_t!
-{ return dispatch_get_main_queue() }
+var globalSerialMainQueue: DispatchQueue!
+{ return DispatchQueue.main }
 
-var globalConcurrentBackgroundQueue: dispatch_queue_t!
-{ return dispatch_get_global_queue(Int(QOS_CLASS_BACKGROUND.rawValue), 0) }
-
-func dispatchTimeFromNowInSeconds(delayInSeconds: Double) -> dispatch_time_t!
-{ return dispatch_time(DISPATCH_TIME_NOW, Int64(delayInSeconds * Double(NSEC_PER_SEC))) }
-
+var globalConcurrentBackgroundQueue: DispatchQueue!
+{ return DispatchQueue.global(qos: .background) }
 
 // CG extensions
 
@@ -118,7 +114,7 @@ extension CGFloat
     { return CGFloat(arc4random_uniform(UInt32.max)) / CGFloat(UInt32.max - 1) }
 
     // Returns a uniformly distributed random CGFloat in the range [min(a,b), max(a,b)].
-    public static func randomUniform(a a: CGFloat, b: CGFloat) -> CGFloat
+    public static func randomUniform(a: CGFloat, b: CGFloat) -> CGFloat
     { return a + (b - a) * CGFloat.randomUniform01 }
 
     // Returns a uniformly distributed random boolean.
